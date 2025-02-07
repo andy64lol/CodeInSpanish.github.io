@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pitón (Python en español)</title>
+    <!-- Carga Brython localmente -->
     <script src="brython.js"></script>
+    <script src="brython_stdlib.js"></script>  <!-- Librería estándar -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,27 +16,64 @@
         textarea {
             width: 100%;
             height: 200px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #4CAF50;
+            border-radius: 4px;
         }
         button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px;
+            padding: 12px 24px;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #45a049;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
         }
     </style>
 </head>
 <body onload="brython()">
     <h1>Lenguaje Personalizado a Python</h1>
-    <p>Ingresa tu código en el lenguaje personalizado y haz clic en "Convertir y Ejecutar".</p>
+    <p>Ingresa tu código en el lenguaje personalizado y haz clic en "Convertir y Ejecutar":</p>
 
     <textarea id="customCode" placeholder="Escribe tu código aquí..."></textarea>
     <br>
     <button onclick="convertAndRun()">Convertir y Ejecutar</button>
+    
+    <!-- Área para resultados -->
+    <div id="output"></div>
 
+    <!-- Script de conversión -->
     <script src="convertidor_python.js"></script>
+
+    <!-- Script Python embebido ejemplo -->
+    <script type="text/python">
+        from browser import document, alert
+        from datetime import datetime  # Requiere brython_stdlib.js
+
+        def current_time():
+            return datetime.now().strftime("%H:%M:%S")
+
+        def convertAndRun():
+            try:
+                code = document["customCode"].value
+                # Aquí iría tu lógica de conversión
+                output = f"[{current_time()}] Ejecutado:\n{code}"
+                document["output"].textContent = output
+            except Exception as e:
+                alert(f"Error: {str(e)}")
+    </script>
 </body>
 </html>
