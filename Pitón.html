@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pitón</title>
+    <title>Pitón IDE</title>
     <script src="brython.js"></script>
     <script src="brython_stdlib.js"></script>
+    <script src="convertidor_python.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -20,6 +21,7 @@
             color: #d4d4d4;
             height: 100vh;
             display: flex;
+            overflow: hidden;
         }
 
         .sidebar {
@@ -251,104 +253,46 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
         updateLineNumbers();
     </script>
 
-    <script>
-        // convertidor_python.js
-        function convertirPitonAPython(customCode) {
-            const replacements = {
-                'funcion': 'def',
-                'fin funcion': '',
-                'si': 'if',
-                'entonces': '',
-                'sino': 'else',
-                'fin si': '',
-                'para': 'for',
-                'en': 'in',
-                'hacer': '',
-                'fin hacer': '',
-                'mientras': 'while',
-                'fin mientras': '',
-                'retornar': 'return',
-                'imprimir': 'print',
-                'verdadero': 'True',
-                'falso': 'False',
-                'nulo': 'None',
-                'y': 'and',
-                'o': 'or',
-                'no': 'not',
-                'es': 'is',
-                'no es': 'is not',
-                'intentar': 'try',
-                'capturar': 'except',
-                'finalmente': 'finally',
-                'levantar': 'raise',
-                'clase': 'class',
-                'importar': 'import',
-                'desde': 'from',
-                'longitud': 'len',
-                'tipo': 'type',
-                'rango': 'range',
-                'cadena': 'str',
-                'entero': 'int',
-                'flotante': 'float',
-                'lista': 'list',
-                'diccionario': 'dict'
-            };
+    <script type="text/python">
+        from browser import document, window
 
-            let pythonCode = customCode;
-            
-            Object.entries(replacements).forEach(([pit, pyt]) => {
-                const regex = new RegExp(`\\b${pit}\\b`, 'g');
-                pythonCode = pythonCode.replace(regex, pyt);
-            });
-
-            pythonCode = pythonCode
-                .replace(/entonces:/g, ':')
-                .replace(/hacer:/g, ':')
-                .replace(/fin\s+(\w+)/g, '')
-                .replace(/(\s*):\s*$/gm, '$1')
-                .replace(/importar (\w+)/g, 'import $1');
-
-            return pythonCode;
-        }
-
-        window.convertirPitonAPython = convertirPitonAPython;
-
-        function convertAndRun() {
-            const editorContent = document.getElementById('editor').value;
-            const pythonCode = convertirPitonAPython(editorContent);
-            
-            const iframe = document.getElementById('preview');
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            iframeDoc.open();
-            iframeDoc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <script src="brython.js"></script>
-                    <script src="brython_stdlib.js"></script>
-                    <style>
-                        body {
-                            padding: 20px;
-                            background: #1e1e1e;
-                            color: #d4d4d4;
-                            font-family: Consolas;
-                        }
-                        .error { color: #f48771; }
-                    </style>
-                </head>
-                <body onload="brython()">
-                    <script type="text/python">
-                        try:
-                            ${pythonCode}
-                        except Exception as e:
-                            document <= html.DIV('Error: ' + str(e), Class='error')
-                    </script>
-                </body>
-                </html>
-            `);
-            iframeDoc.close();
-        }
+        def convertAndRun():
+            try:
+                editor_content = document["editor"].value
+                python_code = window.convertirPitonAPython(editor_content)
+                
+                iframe = document["preview"]
+                iframe_doc = iframe.contentDocument or iframe.contentWindow.document
+                iframe_doc.open()
+                iframe_doc.write(f"""
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <script src="brython.js"></script>
+                        <script src="brython_stdlib.js"></script>
+                        <style>
+                            body {{ 
+                                padding: 20px;
+                                background: #1e1e1e;
+                                color: #d4d4d4;
+                                font-family: Consolas;
+                            }}
+                            .error {{ color: #f48771; }}
+                        </style>
+                    </head>
+                    <body onload="brython()">
+                        <script type="text/python">
+                            try:
+                                {python_code}
+                            except Exception as e:
+                                document <= html.DIV('Error: ' + str(e), Class='error')
+                        </script>
+                    </body>
+                    </html>
+                """)
+                iframe_doc.close()
+            except Exception as e:
+                console.error(f"Error: {e}")
     </script>
 </body>
 </html>
