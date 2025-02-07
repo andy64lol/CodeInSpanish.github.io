@@ -15,7 +15,7 @@
 ## 📦 Installation
 1. Clone the repository:
    ```sh
-   git clone https://github.com/CodeInSpanish/CodeInSpanish.github.io.git
+   git clone https://github.com/andy64lol/CodeInSpanish.github.io.git
    ```
 2. Navigate to the project directory:
    ```sh
