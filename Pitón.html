@@ -3,77 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pitón (Python en español)</title>
-    <!-- Carga Brython localmente -->
+    <title>Pitón</title>
     <script src="brython.js"></script>
-    <script src="brython_stdlib.js"></script>  <!-- Librería estándar -->
+    <script src="brython_stdlib.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            height: 100vh;
+            display: flex;
         }
-        textarea {
-            width: 100%;
-            height: 200px;
-            margin: 10px 0;
-            padding: 10px;
-            border: 2px solid #4CAF50;
-            border-radius: 4px;
+
+        .sidebar {
+            width: 60px;
+            background: #252526;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 0;
+            border-right: 1px solid #333;
         }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
+
+        .sidebar-icon {
+            color: #858585;
+            font-size: 24px;
+            margin: 15px 0;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            transition: 0.3s;
         }
-        button:hover {
-            background-color: #45a049;
+
+        .sidebar-icon:hover {
+            color: #fff;
         }
-        #output {
-            margin-top: 20px;
+
+        .main-container {
+            flex: 1;
+            display: flex;
+        }
+
+        .editor-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #333;
+        }
+
+        .editor-tabs {
+            background: #2d2d2d;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border-bottom: 1px solid #333;
+        }
+
+        .editor-content {
+            flex: 1;
+            position: relative;
+        }
+
+        .line-numbers {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 100%;
+            background: #1e1e1e;
+            color: #858585;
+            text-align: right;
+            padding: 10px;
+            font-family: 'Consolas', monospace;
+            user-select: none;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+            padding: 10px 10px 10px 50px;
+            background: #1e1e1e;
+            border: none;
+            color: #d4d4d4;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            white-space: pre;
+            tab-size: 4;
+        }
+
+        .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            background: #2d2d2d;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        #preview {
+            flex: 1;
+            background: #1e1e1e;
+            border: none;
+        }
+
+        .divider {
+            width: 5px;
+            background: #333;
+            cursor: col-resize;
+        }
+
+        .file-tree {
+            width: 250px;
+            background: #252526;
             padding: 15px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            min-height: 100px;
+            overflow-y: auto;
+        }
+
+        .tree-item {
+            padding: 5px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-radius: 3px;
+        }
+
+        .tree-item:hover {
+            background: #2a2d2e;
+        }
+
+        .tree-item i {
+            margin-right: 8px;
+            color: #858585;
+        }
+
+        .run-button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body onload="brython()">
-    <h1>Lenguaje Personalizado a Python</h1>
-    <p>Ingresa tu código en el lenguaje personalizado y haz clic en "Convertir y Ejecutar":</p>
+    <div class="sidebar">
+        <i class="fa-regular fa-file-code sidebar-icon"></i>
+        <i class="fa-solid fa-play sidebar-icon" onclick="convertAndRun()"></i>
+        <i class="fa-solid fa-folder-open sidebar-icon"></i>
+        <i class="fa-solid fa-gear sidebar-icon"></i>
+    </div>
 
-    <textarea id="customCode" placeholder="Escribe tu código aquí..."></textarea>
-    <br>
-    <button onclick="convertAndRun()">Convertir y Ejecutar</button>
-    
-    <!-- Área para resultados -->
-    <div id="output"></div>
+    <div class="file-tree">
+        <div class="tree-item">
+            <i class="fa-solid fa-folder"></i>
+            Proyecto
+        </div>
+        <div class="tree-item" style="padding-left: 20px;">
+            <i class="fa-regular fa-file"></i>
+            main.ptn
+        </div>
+    </div>
 
-    <!-- Script de conversión -->
-    <script src="convertidor_python.js"></script>
+    <div class="main-container">
+        <div class="editor-pane">
+            <div class="editor-tabs">
+                <i class="fa-regular fa-file-code"></i> main.ptn
+            </div>
+            <div class="editor-content">
+                <div class="line-numbers" id="lineNumbers"></div>
+                <textarea id="editor" spellcheck="false">funcion factorial(n):
+    si n == 0 entonces:
+        retornar 1
+    sino:
+        retornar n * factorial(n - 1)
+    fin si
+fin funcion
 
-    <!-- Script Python embebido ejemplo -->
-    <script type="text/python">
-        from browser import document, alert
-        from datetime import datetime  # Requiere brython_stdlib.js
+imprimir("Factorial de 5:", factorial(5))</textarea>
+            </div>
+        </div>
 
-        def current_time():
-            return datetime.now().strftime("%H:%M:%S")
+        <div class="divider" id="divider"></div>
 
-        def convertAndRun():
-            try:
-                code = document["customCode"].value
-                # Aquí iría tu lógica de conversión
-                output = f"[{current_time()}] Ejecutado:\n{code}"
-                document["output"].textContent = output
-            except Exception as e:
-                alert(f"Error: {str(e)}")
+        <div class="preview-pane">
+            <div class="preview-header">
+                <span>Resultado</span>
+                <button class="run-button" onclick="convertAndRun()">
+                    <i class="fa-solid fa-play"></i> Ejecutar
+                </button>
+            </div>
+            <iframe id="preview"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Manejo del divisor
+        const divider = document.getElementById('divider');
+        let isDragging = false;
+
+        divider.addEventListener('mousedown', () => {
+            isDragging = true;
+            document.body.style.cursor = 'col-resize';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const container = document.querySelector('.main-container');
+            const editorPane = document.querySelector('.editor-pane');
+            const previewPane = document.querySelector('.preview-pane');
+            
+            const containerRect = container.getBoundingClientRect();
+            const newWidth = e.clientX - containerRect.left;
+            
+            editorPane.style.flex = `0 0 ${newWidth}px`;
+            previewPane.style.flex = `1 1 ${containerRect.width - newWidth - 5}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.cursor = 'default';
+        });
+
+        // Numeración de líneas
+        const editor = document.getElementById('editor');
+        const lineNumbers = document.getElementById('lineNumbers');
+
+        function updateLineNumbers() {
+            const lines = editor.value.split('\n').length;
+            lineNumbers.innerHTML = Array(lines).fill().map((_, i) => i + 1).join('<br>');
+        }
+
+        editor.addEventListener('input', updateLineNumbers);
+        updateLineNumbers();
+    </script>
+
+    <script>
+        // convertidor_python.js
+        function convertirPitonAPython(customCode) {
+            const replacements = {
+                'funcion': 'def',
+                'fin funcion': '',
+                'si': 'if',
+                'entonces': '',
+                'sino': 'else',
+                'fin si': '',
+                'para': 'for',
+                'en': 'in',
+                'hacer': '',
+                'fin hacer': '',
+                'mientras': 'while',
+                'fin mientras': '',
+                'retornar': 'return',
+                'imprimir': 'print',
+                'verdadero': 'True',
+                'falso': 'False',
+                'nulo': 'None',
+                'y': 'and',
+                'o': 'or',
+                'no': 'not',
+                'es': 'is',
+                'no es': 'is not',
+                'intentar': 'try',
+                'capturar': 'except',
+                'finalmente': 'finally',
+                'levantar': 'raise',
+                'clase': 'class',
+                'importar': 'import',
+                'desde': 'from',
+                'longitud': 'len',
+                'tipo': 'type',
+                'rango': 'range',
+                'cadena': 'str',
+                'entero': 'int',
+                'flotante': 'float',
+                'lista': 'list',
+                'diccionario': 'dict'
+            };
+
+            let pythonCode = customCode;
+            
+            Object.entries(replacements).forEach(([pit, pyt]) => {
+                const regex = new RegExp(`\\b${pit}\\b`, 'g');
+                pythonCode = pythonCode.replace(regex, pyt);
+            });
+
+            pythonCode = pythonCode
+                .replace(/entonces:/g, ':')
+                .replace(/hacer:/g, ':')
+                .replace(/fin\s+(\w+)/g, '')
+                .replace(/(\s*):\s*$/gm, '$1')
+                .replace(/importar (\w+)/g, 'import $1');
+
+            return pythonCode;
+        }
+
+        window.convertirPitonAPython = convertirPitonAPython;
+
+        function convertAndRun() {
+            const editorContent = document.getElementById('editor').value;
+            const pythonCode = convertirPitonAPython(editorContent);
+            
+            const iframe = document.getElementById('preview');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <script src="brython.js"></script>
+                    <script src="brython_stdlib.js"></script>
+                    <style>
+                        body {
+                            padding: 20px;
+                            background: #1e1e1e;
+                            color: #d4d4d4;
+                            font-family: Consolas;
+                        }
+                        .error { color: #f48771; }
+                    </style>
+                </head>
+                <body onload="brython()">
+                    <script type="text/python">
+                        try:
+                            ${pythonCode}
+                        except Exception as e:
+                            document <= html.DIV('Error: ' + str(e), Class='error')
+                    </script>
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
+        }
     </script>
 </body>
 </html>
