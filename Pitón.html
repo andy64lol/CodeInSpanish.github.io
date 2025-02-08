@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pitón IDE</title>
-    <script src="brython.js"></script>
-    <script src="brython_stdlib.js"></script>
-    <script src="convertidor_python.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -21,47 +18,32 @@
             color: #d4d4d4;
             height: 100vh;
             display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        .sidebar {
-            width: 60px;
+        .container {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .editor-pane, .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             background: #252526;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px 0;
-            border-right: 1px solid #333;
+            border-radius: 5px;
+            overflow: hidden;
         }
 
-        .sidebar-icon {
-            color: #858585;
-            font-size: 24px;
-            margin: 15px 0;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .sidebar-icon:hover {
-            color: #fff;
-        }
-
-        .main-container {
-            flex: 1;
-            display: flex;
-        }
-
-        .editor-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #333;
-        }
-
-        .editor-tabs {
+        .editor-header, .preview-header {
             background: #2d2d2d;
-            padding: 8px 15px;
-            font-size: 0.9em;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid #333;
         }
 
@@ -95,94 +77,51 @@
             font-size: 14px;
             line-height: 1.5;
             resize: none;
-            white-space: pre;
             tab-size: 4;
-        }
-
-        .preview-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .preview-header {
-            background: #2d2d2d;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
+            white-space: pre;
         }
 
         #preview {
             flex: 1;
             background: #1e1e1e;
-            border: none;
-        }
-
-        .divider {
-            width: 5px;
-            background: #333;
-            cursor: col-resize;
-        }
-
-        .file-tree {
-            width: 250px;
-            background: #252526;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: Consolas, monospace;
         }
 
-        .tree-item {
-            padding: 5px 10px;
-            cursor: pointer;
+        .buttons {
+            padding: 15px 20px;
+            background: #252526;
             display: flex;
-            align-items: center;
-            border-radius: 3px;
+            gap: 10px;
+            border-top: 1px solid #333;
         }
 
-        .tree-item:hover {
-            background: #2a2d2e;
-        }
-
-        .tree-item i {
-            margin-right: 8px;
-            color: #858585;
-        }
-
-        .run-button {
+        button {
             background: #007acc;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 8px 15px;
             border-radius: 3px;
             cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #0062a3;
+        }
+
+        .error {
+            color: #ff5555;
         }
     </style>
 </head>
-<body onload="brython()">
-    <div class="sidebar">
-        <i class="fa-regular fa-file-code sidebar-icon"></i>
-        <i class="fa-solid fa-play sidebar-icon" onclick="convertAndRun()"></i>
-        <i class="fa-solid fa-folder-open sidebar-icon"></i>
-        <i class="fa-solid fa-gear sidebar-icon"></i>
-    </div>
-
-    <div class="file-tree">
-        <div class="tree-item">
-            <i class="fa-solid fa-folder"></i>
-            Proyecto
-        </div>
-        <div class="tree-item" style="padding-left: 20px;">
-            <i class="fa-regular fa-file"></i>
-            main.ptn
-        </div>
-    </div>
-
-    <div class="main-container">
+<body>
+    <div class="container">
         <div class="editor-pane">
-            <div class="editor-tabs">
-                <i class="fa-regular fa-file-code"></i> main.ptn
+            <div class="editor-header">
+                <span><i class="fa-regular fa-file-code"></i> main.ptn</span>
             </div>
             <div class="editor-content">
                 <div class="line-numbers" id="lineNumbers"></div>
@@ -198,101 +137,54 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
             </div>
         </div>
 
-        <div class="divider" id="divider"></div>
-
         <div class="preview-pane">
             <div class="preview-header">
-                <span>Resultado</span>
-                <button class="run-button" onclick="convertAndRun()">
-                    <i class="fa-solid fa-play"></i> Ejecutar
-                </button>
+                <span>Python Code</span>
             </div>
-            <iframe id="preview"></iframe>
+            <pre id="preview"></pre>
         </div>
     </div>
 
+    <div class="buttons">
+        <button onclick="convertToPython()">Convertir a Python</button>
+        <button onclick="saveFile('ptn')">Guardar .ptn</button>
+        <button onclick="saveFile('py')">Guardar .py</button>
+    </div>
+
     <script>
-        // Manejo del divisor
-        const divider = document.getElementById('divider');
-        let isDragging = false;
-
-        divider.addEventListener('mousedown', () => {
-            isDragging = true;
-            document.body.style.cursor = 'col-resize';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            
-            const container = document.querySelector('.main-container');
-            const editorPane = document.querySelector('.editor-pane');
-            const previewPane = document.querySelector('.preview-pane');
-            
-            const containerRect = container.getBoundingClientRect();
-            const newWidth = e.clientX - containerRect.left;
-            
-            editorPane.style.flex = `0 0 ${newWidth}px`;
-            previewPane.style.flex = `1 1 ${containerRect.width - newWidth - 5}px`;
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            document.body.style.cursor = 'default';
-        });
-
-        // Numeración de líneas
-        const editor = document.getElementById('editor');
-        const lineNumbers = document.getElementById('lineNumbers');
-
         function updateLineNumbers() {
+            const editor = document.getElementById('editor');
+            const lineNumbers = document.getElementById('lineNumbers');
             const lines = editor.value.split('\n').length;
             lineNumbers.innerHTML = Array(lines).fill().map((_, i) => i + 1).join('<br>');
         }
 
-        editor.addEventListener('input', updateLineNumbers);
+        function convertToPython() {
+            const pseudoCode = document.getElementById('editor').value;
+            if (typeof convertirPitonAPython === 'function') {
+                document.getElementById('preview').textContent = convertirPitonAPython(pseudoCode);
+            } else {
+                alert('Error: La función convertirPitonAPython no está definida.');
+            }
+        }
+
+        function saveFile(extension) {
+            const content = extension === 'ptn' 
+                ? document.getElementById('editor').value 
+                : convertirPitonAPython(document.getElementById('editor').value);
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `main.${extension}`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('editor').addEventListener('input', updateLineNumbers);
         updateLineNumbers();
     </script>
 
-    <script type="text/python">
-        from browser import document, window
-
-        def convertAndRun():
-            try:
-                editor_content = document["editor"].value
-                python_code = window.convertirPitonAPython(editor_content)
-                
-                iframe = document["preview"]
-                iframe_doc = iframe.contentDocument or iframe.contentWindow.document
-                iframe_doc.open()
-                iframe_doc.write(f"""
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <script src="brython.js"></script>
-                        <script src="brython_stdlib.js"></script>
-                        <style>
-                            body {{ 
-                                padding: 20px;
-                                background: #1e1e1e;
-                                color: #d4d4d4;
-                                font-family: Consolas;
-                            }}
-                            .error {{ color: #f48771; }}
-                        </style>
-                    </head>
-                    <body onload="brython()">
-                        <script type="text/python">
-                            try:
-                                {python_code}
-                            except Exception as e:
-                                document <= html.DIV('Error: ' + str(e), Class='error')
-                        </script>
-                    </body>
-                    </html>
-                """)
-                iframe_doc.close()
-            except Exception as e:
-                console.error(f"Error: {e}")
-    </script>
+    <script src="convertidor_python.js" defer></script>
 </body>
 </html>
