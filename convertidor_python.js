@@ -1,19 +1,20 @@
-function convertirPitonAPython(customCode) {
+function convertirPitonAPython(codigo) {
+    // Reemplazos complejos primero
+    let pythonCode = codigo
+        .replace(/funcion(.*?):/g, 'def$1:')       // Funciones
+        .replace(/si(.*?)entonces:/g, 'if$1:')     // If statements
+        .replace(/sino:/g, 'else:')                // Else
+        .replace(/para(.*?)en(.*?)hacer:/g, 'for$1in$2:')  // For loops
+        .replace(/mientras(.*?)hacer:/g, 'while$1:')       // While loops
+        .replace(/imprimir\((.*)\)/g, 'print($1)') // Imprimir
+        .replace(/retornar/g, 'return')            // Retornar
+        .replace(/fin\s+\w+/g, '')                 // Eliminar 'fin' statements
+        .replace(/entonces:/g, ':')                // Eliminar 'entonces'
+        .replace(/hacer:/g, ':');                  // Eliminar 'hacer'
+
+    // Diccionario de reemplazos
     const replacements = {
-        'funcion': 'def',
-        'fin funcion': '',
-        'si': 'if',
-        'entonces': '',
-        'sino': 'else',
-        'fin si': '',
-        'para': 'for',
-        'en': 'in',
-        'hacer': '',
-        'fin hacer': '',
-        'mientras': 'while',
-        'fin mientras': '',
-        'retornar': 'return',
-        'imprimir': 'print',
+        // Palabras reservadas
         'verdadero': 'True',
         'falso': 'False',
         'nulo': 'None',
@@ -22,198 +23,66 @@ function convertirPitonAPython(customCode) {
         'no': 'not',
         'es': 'is',
         'no es': 'is not',
-        'intentar': 'try',
-        'capturar': 'except',
-        'finalmente': 'finally',
-        'levantar': 'raise',
-        'clase': 'class',
-        'importar': 'import',
-        'desde': 'from',
-        'como': 'as',
-        'con': 'with',
-        'pasar': 'pass',
-        'continuar': 'continue',
-        'romper': 'break',
-        'global': 'global',
-        'no local': 'nonlocal',
-        'lambda': 'lambda',
-        'generador': 'yield',
-        'asercion': 'assert',
-        'asincrono': 'async',
-        'esperar': 'await',
-        'cadena': 'str',
-        'entero': 'int',
-        'flotante': 'float',
+        
+        // Estructuras de datos
         'lista': 'list',
         'tupla': 'tuple',
         'conjunto': 'set',
         'diccionario': 'dict',
-        'booleano': 'bool',
-        'bytes': 'bytes',
-        'bytearray': 'bytearray',
-        'complejo': 'complex',
+        
+        // Métodos comunes
+        'longitud': 'len',
+        'tipo': 'type',
         'rango': 'range',
-        'enumerar': 'enumerate',
-        'zip': 'zip',
-        'mapa': 'map',
-        'filtro': 'filter',
-        'reducir': 'reduce',
-        'reversa': 'reversed',
-        'ordenado': 'sorted',
-        'abrir': 'open',
-        'cerrar': 'close',
-        'leer': 'read',
-        'escribir': 'write',
         'iterar': 'iter',
         'siguiente': 'next',
-        'mayusculas': 'upper',
-        'minusculas': 'lower',
-        'capitalizar': 'capitalize',
-        'titulo': 'title',
-        'reemplazar': 'replace',
-        'dividir': 'split',
-        'unir': 'join',
-        'eliminar espacios': 'strip',
-        'buscar': 'find',
-        'contar': 'count',
-        'inicia con': 'startswith',
-        'termina con': 'endswith',
-        'es alfanumerico': 'isalnum',
-        'es alfabetico': 'isalpha',
-        'es digito': 'isdigit',
-        'es espacio': 'isspace',
-        'formatear': 'format',
         'agregar': 'append',
-        'extender': 'extend',
-        'insertar': 'insert',
         'eliminar': 'remove',
-        'pop': 'pop',
-        'limpiar': 'clear',
-        'indice': 'index',
-        'ordenar': 'sort',
-        'reversa': 'reverse',
+        'insertar': 'insert',
         'copiar': 'copy',
-        'obtener': 'get',
-        'claves': 'keys',
-        'valores': 'values',
-        'items': 'items',
-        'actualizar': 'update',
-        'eliminar clave': 'pop',
-        'eliminar ultimo': 'popitem',
-        'mas': '+',
-        'menos': '-',
-        'por': '*',
-        'dividido': '/',
-        'div entera': '//',
-        'modulo': '%',
-        'potencia': '**',
-        'igual': '==',
-        'no igual': '!=',
-        'mayor': '>',
-        'menor': '<',
-        'mayor igual': '>=',
-        'menor igual': '<=',
-        'en': 'in',
-        'no en': 'not in',
-        'es': 'is',
-        'no es': 'is not',
-        'bitwise and': '&',
-        'bitwise or': '|',
-        'bitwise xor': '^',
-        'bitwise not': '~',
-        'shift izquierda': '<<',
-        'shift derecha': '>>',
+        
+        // Módulos comunes
         'matematicas': 'math',
         'aleatorio': 'random',
         'sistema': 'sys',
-        'os': 'os',
         'tiempo': 'time',
-        'fecha': 'datetime',
         'json': 'json',
-        'expresiones regulares': 're',
-        'colecciones': 'collections',
-        'ruta': 'pathlib',
-        'subprocesos': 'subprocess',
-        'logging': 'logging',
-        'argumentos': 'argparse',
-        'itertools': 'itertools',
-        'functools': 'functools',
-        'hilos': 'threading',
-        'multiprocesamiento': 'multiprocessing',
-        'asyncio': 'asyncio',
-        'socket': 'socket',
-        'http': 'http',
-        'urllib': 'urllib',
-        'csv': 'csv',
-        'sqlite3': 'sqlite3',
-        'hashlib': 'hashlib',
-        'zlib': 'zlib',
-        'base64': 'base64',
-        'struct': 'struct',
-        'pickle': 'pickle',
-        'copy': 'copy',
-        'enum': 'enum',
-        'abc': 'abc',
-        'tipado': 'typing',
-        'dataclasses': 'dataclasses',
-        'contextlib': 'contextlib',
-        'unittest': 'unittest',
-        'pdb': 'pdb',
-        'traceback': 'traceback',
-        'inspect': 'inspect',
-        'ast': 'ast',
-        'dis': 'dis',
-        'gc': 'gc',
-        'weakref': 'weakref',
-        'atexit': 'atexit',
-        'signal': 'signal',
-        'select': 'select',
-        'ssl': 'ssl',
-        'uuid': 'uuid',
-        'ipaddress': 'ipaddress',
-        'html': 'html',
-        'xml': 'xml',
-        'email': 'email',
-        'configparser': 'configparser',
-        'getpass': 'getpass',
-        'readline': 'readline',
-        'rlcompleter': 'rlcompleter',
-        'cmd': 'cmd',
-        'shlex': 'shlex',
-        'glob': 'glob',
-        'fnmatch': 'fnmatch',
-        'linecache': 'linecache',
-        'tempfile': 'tempfile',
-        'mmap': 'mmap',
-        'codecs': 'codecs',
-        'unicodedata': 'unicodedata',
-        'string': 'string',
-        'textwrap': 'textwrap',
-        'difflib': 'difflib',
-        're': 're',
-        'binascii': 'binascii',
-        'array': 'array',
-        'queue': 'queue',
-        'heapq': 'heapq',
-        'bisect': 'bisect',
-        'pprint': 'pprint',
-        'reprlib': 'reprlib',
-        'types': 'types',
+        'os': 'os',
+        
+        // Tipos de datos
+        'cadena': 'str',
+        'entero': 'int',
+        'flotante': 'float',
+        'booleano': 'bool',
+        
+        // Control de errores
+        'intentar': 'try',
+        'capturar': 'except',
+        'finalmente': 'finally',
+        'levantar': 'raise',
+        
+        // Clases
+        'clase': 'class',
+        'self': 'self',
+        
+        // Módulos avanzados
+        'asincrono': 'async',
+        'esperar': 'await',
+        'generador': 'yield'
     };
 
-    let pythonCode = customCode;
-
+    // Aplicar reemplazos simples
     Object.entries(replacements).forEach(([pit, pyt]) => {
         const regex = new RegExp(`\\b${pit}\\b`, 'g');
         pythonCode = pythonCode.replace(regex, pyt);
     });
 
+    // Limpieza final
     pythonCode = pythonCode
-        .replace(/entonces:/g, ':')
-        .replace(/hacer:/g, ':')
-        .replace(/fin\s+(\w+)/g, '')
-        .replace(/(\s*):\s*$/gm, '$1')
-        .replace(/importar (\w+)/g, 'import $1');
+        .replace(/\s+:/g, ':')                     // Eliminar espacios antes de :
+        .replace(/:\s*$/gm, ':')                   // Asegurar : al final de línea
+        .replace(/(\n){3,}/g, '\n\n')              // Eliminar múltiples líneas vacías
+        .replace(/(else|elif|except|finally):/g, '$1:  # type: ignore');
 
     return pythonCode;
 }
