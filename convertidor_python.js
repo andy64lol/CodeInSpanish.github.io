@@ -2,8 +2,8 @@ function convertirPitonAPython(codigo) {
   let pythonCode = codigo
     .replace(/(\n|^)\s*funcion\s+(.*?):/g, '$1def $2:')
     .replace(/si\s+(.*?)\s+entonces:/g, 'if $1:')
-    .replace(/sino:/g, 'else:')
     .replace(/sino\s+si\s+(.*?)\s+entonces:/g, 'elif $1:')
+    .replace(/sino:/g, 'else:')
     .replace(/para\s+(.*?)\s+en\s+(.*?)\s+hacer:/g, 'for $1 in $2:')
     .replace(/mientras\s+(.*?)\s+hacer:/g, 'while $1:')
     .replace(/imprimir\((.*)\)/g, 'print($1)')
@@ -36,6 +36,12 @@ function convertirPitonAPython(codigo) {
     pythonCode = pythonCode.replace(regex, pyt);
   });
 
+  // Fix indentation
+  pythonCode = pythonCode.replace(/(\n)(\s*)(\w)/g, (match, p1, p2, p3) => {
+    const indentLevel = p2.length / 2;
+    return `${p1}${'  '.repeat(indentLevel)}${p3}`;
+  });
+
   return pythonCode
     .replace(/\s+:/g, ':')
     .replace(/(\n){3,}/g, '\n\n')
@@ -59,7 +65,7 @@ function convertirPythonAPiton(code) {
     .replace(/\bin\b/g, "en")
     .replace(/\bis\b/g, "es")
     .replace(/\bis not\b/g, "no es")
-    .replace(/\bTrue\b/g, "verdadero")
+    .(/\replacebTrue\b/g, "verdadero")
     .replace(/\bFalse\b/g, "falso")
     .replace(/\bNone\b/g, "nulo");
 
