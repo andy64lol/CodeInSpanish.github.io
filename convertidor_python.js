@@ -54,7 +54,22 @@ function convertirPitonAPython(codigo) {
     'self': 'self',
     'asincrono': 'async',
     'esperar': 'await',
-    'generador': 'yield'
+    'generador': 'yield',
+    'leer': 'read',
+    'escribir': 'write',
+    'cerrar': 'close',
+    'abrir': 'open',
+    'ejecutar': 'exec',
+    'evaluar': 'eval',
+    'enumerar': 'enumerate',
+    'mapear': 'map',
+    'filtrar': 'filter',
+    'reducir': 'reduce',
+    'lambda': 'lambda',
+    'super': 'super',
+    'global': 'global',
+    'no local': 'nonlocal',
+    'devolver': 'yield'
   };
 
   Object.entries(replacements).forEach(([pit, pyt]) => {
@@ -73,14 +88,38 @@ function convertirPitonAPython(codigo) {
 
 // Function to convert Python code to Pitón code
 function convertirPythonAPiton(code) {
-  return code
+  let pitonCode = code
     .replace(/def/g, "funcion")
     .replace(/return/g, "retornar")
     .replace(/if /g, "si ")
     .replace(/else:/g, "sino:")
-    .replace(/:/g, " entonces:")
-    + "\nfin funcion";
+    .replace(/elif/g, "sino si")
+    .replace(/for /g, "para ")
+    .replace(/while /g, "mientras ")
+    .replace(/try:/g, "intentar:")
+    .replace(/except/g, "capturar")
+    .replace(/finally:/g, "finalmente:")
+    .replace(/raise/g, "levantar")
+    .replace(/class/g, "clase")
+    .replace(/async/g, "asincrono")
+    .replace(/await/g, "esperar")
+    .replace(/yield/g, "generador")
+    .replace(/open/g, "abrir")
+    .replace(/read/g, "leer")
+    .replace(/write/g, "escribir")
+    .replace(/close/g, "cerrar")
+    .replace(/exec/g, "ejecutar")
+    .replace(/eval/g, "evaluar")
+    .replace(/enumerate/g, "enumerar")
+    .replace(/map/g, "mapear")
+    .replace(/filter/g, "filtrar")
+    .replace(/reduce/g, "reducir")
+    .replace(/lambda/g, "lambda")
+    .replace(/super/g, "super")
+    .replace(/global/g, "global")
+    .replace(/nonlocal/g, "no local")
+    .replace(/:/g, " entonces:");
+
+  return pitonCode + "\nfin funcion";
 }
 
-// Export the functions for use in other files
-export { convertirPitonAPython, convertirPythonAPiton };
