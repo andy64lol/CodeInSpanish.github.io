@@ -5,61 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeInSpanish - Menú Principal</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
             display: flex;
             flex-direction: column;
             align-items: center;
             height: 100vh;
             justify-content: center;
         }
+
         header {
-            background-color: #4CAF50;
+            background: #252526;
             color: white;
             width: 100%;
             text-align: center;
-            padding: 15px;
+            padding: 20px;
+            border-bottom: 1px solid #3c3c3c;
+            font-size: 18px;
         }
+
         .menu {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            background: #252526;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
         }
+
         .menu button {
-            background-color: #4CAF50;
+            background: #007acc;
             color: white;
-            padding: 15px 25px;
-            margin: 10px;
+            padding: 12px 25px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
-            width: 200px;
+            font-size: 16px;
+            width: 240px;
+            transition: background 0.3s, transform 0.1s;
+            text-align: left;
         }
+
         .menu button:hover {
-            background-color: #45a049;
+            background: #005f9e;
+            transform: scale(1.02);
         }
+
         footer {
-            margin-top: 20px;
-            font-size: 14px;
+            position: absolute;
+            bottom: 10px;
+            font-size: 12px;
             color: #888;
+            background: #252526;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #3c3c3c;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Bienvenido a CodeInSpanish</h1>
-        <p>Escribe y ejecuta código en español.</p>
+        <h1>CodeInSpanish</h1>
+        <p>Escribe y ejecuta código en español</p>
     </header>
 
     <div class="menu">
-        <button onclick="location.href='Pitón.html'">Pitón (Python)</button>
+        <button onclick="location.href='Pitón.html'">🐍 Pitón (Python)</button>
     </div>
 
     <footer>
-        <p>&copy; 2025 CodeInSpanish. https://github.com/andy64lol/CodeInSpanish.github.io</p>
+        <p>&copy; 2025 CodeInSpanish. <a href="https://github.com/andy64lol/CodeInSpanish.github.io" style="color: #5a9bd6; text-decoration: none;">GitHub</a></p>
     </footer>
 </body>
 </html>
