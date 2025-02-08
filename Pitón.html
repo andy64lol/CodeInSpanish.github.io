@@ -4,114 +4,114 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pitón IDE</title>
-  <styles>
-  * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #1e1e1e;
-  color: #d4d4d4;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-.container {
-  flex: 1;
-  display: flex;
-  padding: 20px;
-  gap: 20px;
-}
+    .container {
+      flex: 1;
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+    }
 
-.editor-pane, .preview-pane {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #252526;
-  border-radius: 5px;
-  overflow: hidden;
-}
+    .editor-pane, .preview-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #252526;
+      border-radius: 5px;
+      overflow: hidden;
+    }
 
-.editor-header, .preview-header {
-  background: #2d2d2d;
-  padding: 12px 15px;
-  border-bottom: 1px solid #333;
-}
+    .editor-header, .preview-header {
+      background: #2d2d2d;
+      padding: 12px 15px;
+      border-bottom: 1px solid #333;
+    }
 
-.editor-content {
-  flex: 1;
-  position: relative;
-}
+    .editor-content {
+      flex: 1;
+      position: relative;
+    }
 
-.line-numbers {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 40px;
-  height: 100%;
-  background: #1e1e1e;
-  color: #858585;
-  text-align: right;
-  padding: 10px;
-  font-family: 'Consolas', monospace;
-  user-select: none;
-}
+    .line-numbers {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 100%;
+      background: #1e1e1e;
+      color: #858585;
+      text-align: right;
+      padding: 10px;
+      font-family: 'Consolas', monospace;
+      user-select: none;
+    }
 
-#editor {
-  width: 100%;
-  height: 100%;
-  padding: 10px 10px 10px 50px;
-  background: #1e1e1e;
-  border: none;
-  color: #d4d4d4;
-  font-family: 'Consolas', monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  resize: none;
-  tab-size: 4;
-  white-space: pre;
-}
+    #editor {
+      width: 100%;
+      height: 100%;
+      padding: 10px 10px 10px 50px;
+      background: #1e1e1e;
+      border: none;
+      color: #d4d4d4;
+      font-family: 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      tab-size: 4;
+      white-space: pre;
+    }
 
-#preview {
-  flex: 1;
-  background: #1e1e1e;
-  padding: 20px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  font-family: Consolas, monospace;
-}
+    #preview {
+      flex: 1;
+      background: #1e1e1e;
+      padding: 20px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+    }
 
-.buttons {
-  padding: 15px 20px;
-  background: #252526;
-  display: flex;
-  gap: 10px;
-  border-top: 1px solid #333;
-}
+    .buttons {
+      padding: 15px 20px;
+      background: #252526;
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid #333;
+    }
 
-button {
-  background: #007acc;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
+    button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
 
-button:hover {
-  background: #0062a3;
-}
+    button:hover {
+      background: #0062a3;
+    }
 
-.error {
-  color: #ff5555;
-}
-</styles>
+    .error {
+      color: #ff5555;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -143,173 +143,158 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
     <button id="convertButton">Convertir a Python</button>
     <button id="saveNativeButton">Guardar .ptn</button>
     <button id="saveConvertedButton">Guardar .py</button>
-   <a href="index.html"><button>Volver</button></a>
+    <a href="index.html"><button>Volver</button></a>
     <button id="loadButton">Cargar</button>
   </div>
   <input type="file" id="fileInput" style="display:none" />
   <script>
     function convertirPitonAPython(codigo) {
-  // Normalize line endings and trim the code
-  let pythonCode = codigo.replace(/\r\n/g, '\n').trim();
+      // Normalize line endings and trim the code
+      let pythonCode = codigo.replace(/\r\n/g, '\n').trim();
 
-  // Handle function definitions
-  pythonCode = pythonCode.replace(/(\n|^)\s*funcion\s+(\w+)\s*\(([^)]*)\)\s*:/g, (match, p1, p2, p3) => {
-    return `${p1}def ${p2}(${p3}):`;
-  });
+      // Handle function definitions
+      pythonCode = pythonCode.replace(/(\n|^)\s*funcion\s+(\w+)\s*\(([^)]*)\)\s*:/g, (match, p1, p2, p3) => {
+        return `${p1}def ${p2}(${p3}):`;
+      });
 
-  // Handle if, elif, and else statements
-  pythonCode = pythonCode.replace(/si\s+(.*?)\s+entonces:/g, 'if $1:');
-  pythonCode = pythonCode.replace(/sino\s+si\s+(.*?)\s+entonces:/g, 'elif $1:');
-  pythonCode = pythonCode.replace(/sino:/g, 'else:');
+      // Handle if, elif, and else statements
+      pythonCode = pythonCode.replace(/si\s+(.*?)\s+entonces:/g, 'if $1:');
+      pythonCode = pythonCode.replace(/sino\s+si\s+(.*?)\s+entonces:/g, 'elif $1:');
+      pythonCode = pythonCode.replace(/sino:/g, 'else:');
 
-  // Handle loops
-  pythonCode = pythonCode.replace(/para\s+(.*?)\s+en\s+(.*?)\s+hacer:/g, 'for $1 in $2:');
-  pythonCode = pythonCode.replace(/mientras\s+(.*?)\s+hacer:/g, 'while $1:');
+      // Handle loops
+      pythonCode = pythonCode.replace(/para\s+(.*?)\s+en\s+(.*?)\s+hacer:/g, 'for $1 in $2:');
+      pythonCode = pythonCode.replace(/mientras\s+(.*?)\s+hacer:/g, 'while $1:');
 
-  // Handle print statements
-  pythonCode = pythonCode.replace(/imprimir\((.*)\)/g, 'print($1)');
+      // Handle print statements
+      pythonCode = pythonCode.replace(/imprimir\((.*)\)/g, 'print($1)');
 
-  // Handle return statements
-  pythonCode = pythonCode.replace(/retornar/g, 'return');
+      // Handle return statements
+      pythonCode = pythonCode.replace(/retornar/g, 'return');
 
-  // Handle logical operators and keywords
-  const replacements = {
-    'no es': 'is not',
-    'es': 'is',
-    'verdadero': 'True',
-    'falso': 'False',
-    'nulo': 'None',
-    'y': 'and',
-    'o': 'or',
-    'no': 'not',
-    'lista': 'list',
-    'tupla': 'tuple',
-    'conjunto': 'set',
-    'diccionario': 'dict',
-    'longitud': 'len',
-    'rango': 'range',
-    'iterar': 'iter',
-    'siguiente': 'next'
-  };
+      // Handle logical operators and keywords
+      const replacements = {
+        'no es': 'is not',
+        'es': 'is',
+        'verdadero': 'True',
+        'falso': 'False',
+        'nulo': 'None',
+        'y': 'and',
+        'o': 'or',
+        'no': 'not',
+        'lista': 'list',
+        'tupla': 'tuple',
+        'conjunto': 'set',
+        'diccionario': 'dict',
+        'longitud': 'len',
+        'rango': 'range',
+        'iterar': 'iter',
+        'siguiente': 'next'
+      };
 
- 
-  const orderedKeys = [
-    'no es', 'es', 'verdadero', 'falso', 'nulo', 'y', 'o', 'no',
-    'lista', 'tupla', 'conjunto', 'diccionario', 'longitud', 'rango', 'iterar', 'siguiente'
-  ];
+      const orderedKeys = [
+        'no es', 'es', 'verdadero', 'falso', 'nulo', 'y', 'o', 'no',
+        'lista', 'tupla', 'conjunto', 'diccionario', 'longitud', 'rango', 'iterar', 'siguiente'
+      ];
 
-  orderedKeys.forEach(key => {
-    const regex = new RegExp(`\\b${key}\\b`, 'g');
-    pythonCode = pythonCode.replace(regex, replacements[key]);
-  });
+      orderedKeys.forEach(key => {
+        const regex = new RegExp(`\\b${key}\\b`, 'g');
+        pythonCode = pythonCode.replace(regex, replacements[key]);
+      });
 
+      pythonCode = pythonCode.replace(/(\n|^)\s*fin(\s+\w+)?/g, '');
 
-  pythonCode = pythonCode.replace(/(\n|^)\s*fin(\s+\w+)?/g, '');
+      pythonCode = pythonCode.replace(/(\n)(\s*)/g, (match, p1, p2) => {
+        const indentLevel = p2.length / 2;
+        return `${p1}${'  '.repeat(indentLevel)}`;
+      });
 
+      pythonCode = pythonCode.replace(/\s+:/g, ':');
+      pythonCode = pythonCode.replace(/(\n){3,}/g, '\n\n');
 
-  pythonCode = pythonCode.replace(/(\n)(\s*)/g, (match, p1, p2) => {
-    const indentLevel = p2.length / 2;
-    return `${p1}${'  '.repeat(indentLevel)}`;
-  });
+      return pythonCode.trim();
+    }
 
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const convertButton = document.getElementById('convertButton');
+    const saveNativeButton = document.getElementById('saveNativeButton');
+    const saveConvertedButton = document.getElementById('saveConvertedButton');
+    const loadButton = document.getElementById('loadButton');
+    const fileInput = document.getElementById('fileInput');
 
-  pythonCode = pythonCode.replace(/\s+:/g, ':');
-  pythonCode = pythonCode.replace(/(\n){3,}/g, '\n\n');
+    let currentMode = "ptn";
 
-  return pythonCode.trim();
-}
- 
-const editor = document.getElementById('editor');
-const preview = document.getElementById('preview');
-const convertButton = document.getElementById('convertButton');
-const saveNativeButton = document.getElementById('saveNativeButton');
-const saveConvertedButton = document.getElementById('saveConvertedButton');
-const invertButton = document.getElementById('invertButton');
-const backButton = document.getElementById('backButton');
-const loadButton = document.getElementById('loadButton');
-const fileInput = document.getElementById('fileInput');
+    function updateLineNumbers() {
+      const lines = editor.value.split('\n').length;
+      document.getElementById('lineNumbers').innerHTML = Array(lines)
+        .fill()
+        .map((_, i) => i + 1)
+        .join('<br>');
+    }
 
-let currentMode = "ptn";
+    function convertCode() {
+      preview.textContent = currentMode === "ptn" 
+        ? convertirPitonAPython(editor.value)
+        : ''; // Handle conversion back if needed
+    }
 
-function updateLineNumbers() {
-  const lines = editor.value.split('\n').length;
-  document.getElementById('lineNumbers').innerHTML = Array(lines)
-    .fill()
-    .map((_, i) => i + 1)
-    .join('<br>');
-}
+    function saveFile(extension) {
+      const content = extension === (currentMode === "ptn" ? "ptn" : "py")
+        ? editor.value
+        : preview.textContent;
 
-function convertCode() {
-  preview.textContent = currentMode === "ptn" 
-    ? convertirPitonAPython(editor.value)
-    : convertirPythonAPiton(editor.value);
-}
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `main.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
-function saveFile(extension) {
-  const content = extension === (currentMode === "ptn" ? "ptn" : "py")
-    ? editor.value
-    : preview.textContent;
-  
-  const blob = new Blob([content], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `main.${extension}`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
+    function updateUI() {
+      document.getElementById('editorHeader').textContent = 
+        `main.${currentMode === "ptn" ? "ptn" : "py"}`;
+        
+      document.getElementById('previewHeader').textContent = 
+        `${currentMode === "ptn" ? "Python" : "Pitón"} Code`;
+        
+      convertButton.textContent = 
+        `Convertir a ${currentMode === "ptn" ? "Python" : "Pitón"}`;
+        
+      saveNativeButton.textContent = 
+        `Guardar .${currentMode === "ptn" ? "ptn" : "py"}`;
+        
+      saveConvertedButton.textContent = 
+        `Guardar .${currentMode === "ptn" ? "py" : "ptn"}`;
+    }
 
-function updateUI() {
-  document.getElementById('editorHeader').textContent = 
-    `main.${currentMode === "ptn" ? "ptn" : "py"}`;
-    
-  document.getElementById('previewHeader').textContent = 
-    `${currentMode === "ptn" ? "Python" : "Pitón"} Code`;
-    
-  convertButton.textContent = 
-    `Convertir a ${currentMode === "ptn" ? "Python" : "Pitón"}`;
-    
-  saveNativeButton.textContent = 
-    `Guardar .${currentMode === "ptn" ? "ptn" : "py"}`;
-    
-  saveConvertedButton.textContent = 
-    `Guardar .${currentMode === "ptn" ? "py" : "ptn"}`;
-}
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        editor.value = e.target.result;
+        currentMode = file.name.endsWith('.ptn') ? 'ptn' : 'py';
+        updateUI();
+        convertCode();
+        updateLineNumbers();
+      };
+      reader.readAsText(file);
+    }
 
-function invertConversion() {
-  currentMode = currentMode === "ptn" ? "py" : "ptn";
-  [editor.value, preview.textContent] = [preview.textContent, editor.value];
-  updateUI();
-  updateLineNumbers();
-}
+    editor.addEventListener('input', updateLineNumbers);
+    convertButton.addEventListener('click', convertCode);
+    saveNativeButton.addEventListener('click', () => saveFile(currentMode === "ptn" ? "ptn" : "py"));
+    saveConvertedButton.addEventListener('click', () => saveFile(currentMode === "ptn" ? "py" : "ptn"));
+    loadButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    });
 
-function handleFile(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    editor.value = e.target.result;
-    currentMode = file.name.endsWith('.ptn') ? 'ptn' : 'py';
     updateUI();
-    convertCode();
     updateLineNumbers();
-  };
-  reader.readAsText(file);
-}
-
-editor.addEventListener('input', updateLineNumbers);
-convertButton.addEventListener('click', convertCode);
-saveNativeButton.addEventListener('click', () => saveFile(currentMode === "ptn" ? "ptn" : "py"));
-saveConvertedButton.addEventListener('click', () => saveFile(currentMode === "ptn" ? "py" : "ptn"));
-invertButton.addEventListener('click', invertConversion);
-backButton.addEventListener('click', () => window.location.href = 'index.html');
-loadButton.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) handleFile(file);
-});
-
-updateUI();
-updateLineNumbers();
-convertCode();
+    convertCode();
   </script>
 </body>
 </html>
