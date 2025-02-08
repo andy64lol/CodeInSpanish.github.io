@@ -1,6 +1,5 @@
 function convertirPitonAPython(customCode) {
     const replacements = {
-        // Palabras clave básicas
         'funcion': 'def',
         'fin funcion': '',
         'si': 'if',
@@ -42,8 +41,6 @@ function convertirPitonAPython(customCode) {
         'asercion': 'assert',
         'asincrono': 'async',
         'esperar': 'await',
-
-        // Tipos de datos
         'cadena': 'str',
         'entero': 'int',
         'flotante': 'float',
@@ -69,8 +66,6 @@ function convertirPitonAPython(customCode) {
         'escribir': 'write',
         'iterar': 'iter',
         'siguiente': 'next',
-
-        // Métodos de cadenas
         'mayusculas': 'upper',
         'minusculas': 'lower',
         'capitalizar': 'capitalize',
@@ -88,8 +83,6 @@ function convertirPitonAPython(customCode) {
         'es digito': 'isdigit',
         'es espacio': 'isspace',
         'formatear': 'format',
-
-        // Métodos de listas
         'agregar': 'append',
         'extender': 'extend',
         'insertar': 'insert',
@@ -100,8 +93,6 @@ function convertirPitonAPython(customCode) {
         'ordenar': 'sort',
         'reversa': 'reverse',
         'copiar': 'copy',
-
-        // Métodos de diccionarios
         'obtener': 'get',
         'claves': 'keys',
         'valores': 'values',
@@ -109,8 +100,6 @@ function convertirPitonAPython(customCode) {
         'actualizar': 'update',
         'eliminar clave': 'pop',
         'eliminar ultimo': 'popitem',
-
-        // Operadores y símbolos
         'mas': '+',
         'menos': '-',
         'por': '*',
@@ -134,8 +123,6 @@ function convertirPitonAPython(customCode) {
         'bitwise not': '~',
         'shift izquierda': '<<',
         'shift derecha': '>>',
-
-        // Módulos estándar
         'matematicas': 'math',
         'aleatorio': 'random',
         'sistema': 'sys',
@@ -216,13 +203,11 @@ function convertirPitonAPython(customCode) {
 
     let pythonCode = customCode;
 
-    // Reemplazar palabras clave
     Object.entries(replacements).forEach(([pit, pyt]) => {
         const regex = new RegExp(`\\b${pit}\\b`, 'g');
         pythonCode = pythonCode.replace(regex, pyt);
     });
 
-    // Manejo de bloques y estructura
     pythonCode = pythonCode
         .replace(/entonces:/g, ':')
         .replace(/hacer:/g, ':')
