@@ -6,7 +6,6 @@
   <title>Pitón IDE</title>
   <link rel="stylesheet" href="editor_estilos.css">
   <style>
-    
     * {
       margin: 0;
       padding: 0;
@@ -108,10 +107,8 @@
 </head>
 <body>
   <div class="container">
- 
     <div class="editor-pane">
       <div class="editor-header">
-      
         <span id="editorHeader"><i class="fa-regular fa-file-code"></i> main.ptn</span>
       </div>
       <div class="editor-content">
@@ -127,8 +124,6 @@ fin funcion
 imprimir("Factorial de 5:", factorial(5))</textarea>
       </div>
     </div>
-
-  
     <div class="preview-pane">
       <div class="preview-header">
         <span id="previewHeader">Python Code</span>
@@ -136,8 +131,6 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       <pre id="preview"></pre>
     </div>
   </div>
-
-
   <div class="buttons">
     <button id="convertButton" onclick="convertCode()">Convertir a Python</button>
     <button id="saveNativeButton" onclick="saveFile(getNativeExtension())">Guardar .ptn</button>
@@ -146,36 +139,11 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
     <button onclick="volver()">Volver</button>
     <button onclick="document.getElementById('fileInput').click()">Cargar</button>
   </div>
-
-  
   <input type="file" id="fileInput" style="display:none" />
-
+  <script src="convertidor_python.js">
   <script>
-   
     let currentMode = "ptn";
 
-   
-    function convertirPitonAPython(code) {
-      return code
-        .replace(/funcion/g, "def")
-        .replace(/retornar/g, "return")
-        .replace(/si /g, "if ")
-        .replace(/entonces:/g, ":")
-        .replace(/sino:/g, "else:")
-        .replace(/fin funcion/g, "");
-    }
-
-    function convertirPythonAPiton(code) {
-      return code
-        .replace(/def/g, "funcion")
-        .replace(/return/g, "retornar")
-        .replace(/if /g, "si ")
-        .replace(/else:/g, "sino:")
-        .replace(/:/g, " entonces:")
-        + "\nfin funcion";
-    }
-
-    
     function updateLineNumbers() {
       const editor = document.getElementById('editor');
       const lineNumbers = document.getElementById('lineNumbers');
@@ -183,7 +151,6 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       lineNumbers.innerHTML = Array(lines).fill().map((_, i) => i + 1).join('<br>');
     }
 
-   
     function convertCode() {
       const code = document.getElementById('editor').value;
       let result = "";
@@ -195,15 +162,14 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       document.getElementById('preview').textContent = result;
     }
 
-  
     function getNativeExtension() {
       return currentMode;
     }
+
     function getConvertedExtension() {
       return currentMode === "ptn" ? "py" : "ptn";
     }
 
-   
     function saveFile(extension) {
       const editor = document.getElementById('editor');
       let content = "";
@@ -221,7 +187,6 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       URL.revokeObjectURL(url);
     }
 
-    
     function invertirConversion() {
       const editor = document.getElementById('editor');
       const preview = document.getElementById('preview');
@@ -235,7 +200,6 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       updateLineNumbers();
     }
 
-   
     function volver() {
       if (currentMode === "py") {
         const editor = document.getElementById('editor');
@@ -249,7 +213,6 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       }
     }
 
-  
     function updateEditorHeaders() {
       const editorHeader = document.getElementById('editorHeader');
       const previewHeader = document.getElementById('previewHeader');
@@ -262,7 +225,6 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       }
     }
 
-   
     function updateConvertButton() {
       const convertButton = document.getElementById('convertButton');
       if (currentMode === "ptn") {
@@ -281,14 +243,12 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       }
     }
 
-  
     document.getElementById('fileInput').addEventListener('change', function(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
           const content = e.target.result;
-         
           const extension = file.name.split('.').pop().toLowerCase();
           if (extension === "ptn") {
             currentMode = "ptn";
@@ -311,14 +271,10 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
       }
     });
 
-   
     document.getElementById('editor').addEventListener('input', updateLineNumbers);
     updateLineNumbers();
     updateEditorHeaders();
     updateConvertButton();
   </script>
-
- 
-  <script src="convertidor_python.js" defer></script>
 </body>
 </html>
