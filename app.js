@@ -74,7 +74,6 @@ function handleFile(file) {
   reader.readAsText(file);
 }
 
-
 editor.addEventListener('input', updateLineNumbers);
 convertButton.addEventListener('click', convertCode);
 saveNativeButton.addEventListener('click', () => saveFile(currentMode === "ptn" ? "ptn" : "py"));
@@ -86,7 +85,6 @@ fileInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file) handleFile(file);
 });
-
 
 updateUI();
 updateLineNumbers();
