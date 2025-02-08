@@ -4,112 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pitón IDE</title>
-  <link rel="stylesheet" href="editor_estilos.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #1e1e1e;
-      color: #d4d4d4;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .container {
-      flex: 1;
-      display: flex;
-      padding: 20px;
-      gap: 20px;
-    }
-    .editor-pane, .preview-pane {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #252526;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .editor-header, .preview-header {
-      background: #2d2d2d;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333;
-    }
-    .editor-content {
-      flex: 1;
-      position: relative;
-    }
-    .line-numbers {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 40px;
-      height: 100%;
-      background: #1e1e1e;
-      color: #858585;
-      text-align: right;
-      padding: 10px;
-      font-family: 'Consolas', monospace;
-      user-select: none;
-    }
-    #editor {
-      width: 100%;
-      height: 100%;
-      padding: 10px 10px 10px 50px;
-      background: #1e1e1e;
-      border: none;
-      color: #d4d4d4;
-      font-family: 'Consolas', monospace;
-      font-size: 14px;
-      line-height: 1.5;
-      resize: none;
-      tab-size: 4;
-      white-space: pre;
-    }
-    #preview {
-      flex: 1;
-      background: #1e1e1e;
-      padding: 20px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      font-family: Consolas, monospace;
-    }
-    .buttons {
-      padding: 15px 20px;
-      background: #252526;
-      display: flex;
-      gap: 10px;
-      border-top: 1px solid #333;
-    }
-    button {
-      background: #007acc;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background: #0062a3;
-    }
-    .error {
-      color: #ff5555;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
     <div class="editor-pane">
       <div class="editor-header">
-        <span id="editorHeader"><i class="fa-regular fa-file-code"></i> main.ptn</span>
+        <span id="editorHeader">main.ptn</span>
       </div>
       <div class="editor-content">
         <div class="line-numbers" id="lineNumbers"></div>
@@ -132,149 +33,15 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
     </div>
   </div>
   <div class="buttons">
-    <button id="convertButton" onclick="convertCode()">Convertir a Python</button>
-    <button id="saveNativeButton" onclick="saveFile(getNativeExtension())">Guardar .ptn</button>
-    <button id="saveConvertedButton" onclick="saveFile(getConvertedExtension())">Guardar .py</button>
-    <button onclick="invertirConversion()">Invertir</button>
-    <button onclick="volver()">Volver</button>
-    <button onclick="document.getElementById('fileInput').click()">Cargar</button>
+    <button id="convertButton">Convertir a Python</button>
+    <button id="saveNativeButton">Guardar .ptn</button>
+    <button id="saveConvertedButton">Guardar .py</button>
+    <button id="invertButton">Invertir</button>
+    <button id="backButton">Volver</button>
+    <button id="loadButton">Cargar</button>
   </div>
   <input type="file" id="fileInput" style="display:none" />
-  <script src="convertidor_python.js">
-  <script>
-    let currentMode = "ptn";
-
-    function updateLineNumbers() {
-      const editor = document.getElementById('editor');
-      const lineNumbers = document.getElementById('lineNumbers');
-      const lines = editor.value.split('\n').length;
-      lineNumbers.innerHTML = Array(lines).fill().map((_, i) => i + 1).join('<br>');
-    }
-
-    function convertCode() {
-      const code = document.getElementById('editor').value;
-      let result = "";
-      if (currentMode === "ptn") {
-        result = convertirPitonAPython(code);
-      } else {
-        result = convertirPythonAPiton(code);
-      }
-      document.getElementById('preview').textContent = result;
-    }
-
-    function getNativeExtension() {
-      return currentMode;
-    }
-
-    function getConvertedExtension() {
-      return currentMode === "ptn" ? "py" : "ptn";
-    }
-
-    function saveFile(extension) {
-      const editor = document.getElementById('editor');
-      let content = "";
-      if (currentMode === "ptn") {
-        content = extension === "ptn" ? editor.value : convertirPitonAPython(editor.value);
-      } else {
-        content = extension === "py" ? editor.value : convertirPythonAPiton(editor.value);
-      }
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `main.${extension}`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function invertirConversion() {
-      const editor = document.getElementById('editor');
-      const preview = document.getElementById('preview');
-      const currentEditorContent = editor.value;
-      const currentPreviewContent = preview.textContent;
-      editor.value = currentPreviewContent;
-      preview.textContent = currentEditorContent;
-      currentMode = currentMode === "ptn" ? "py" : "ptn";
-      updateEditorHeaders();
-      updateConvertButton();
-      updateLineNumbers();
-    }
-
-    function volver() {
-      if (currentMode === "py") {
-        const editor = document.getElementById('editor');
-        const pitonCode = convertirPythonAPiton(editor.value);
-        editor.value = pitonCode;
-        currentMode = "ptn";
-        updateEditorHeaders();
-        updateConvertButton();
-        convertCode();
-        updateLineNumbers();
-      }
-    }
-
-    function updateEditorHeaders() {
-      const editorHeader = document.getElementById('editorHeader');
-      const previewHeader = document.getElementById('previewHeader');
-      if (currentMode === "ptn") {
-        editorHeader.innerHTML = '<i class="fa-regular fa-file-code"></i> main.ptn';
-        previewHeader.textContent = "Python Code";
-      } else {
-        editorHeader.innerHTML = '<i class="fa-regular fa-file-code"></i> main.py';
-        previewHeader.textContent = "Pitón Code";
-      }
-    }
-
-    function updateConvertButton() {
-      const convertButton = document.getElementById('convertButton');
-      if (currentMode === "ptn") {
-        convertButton.textContent = "Convertir a Python";
-      } else {
-        convertButton.textContent = "Convertir a Pitón";
-      }
-      const saveNativeButton = document.getElementById('saveNativeButton');
-      const saveConvertedButton = document.getElementById('saveConvertedButton');
-      if (currentMode === "ptn") {
-        saveNativeButton.textContent = "Guardar .ptn";
-        saveConvertedButton.textContent = "Guardar .py";
-      } else {
-        saveNativeButton.textContent = "Guardar .py";
-        saveConvertedButton.textContent = "Guardar .ptn";
-      }
-    }
-
-    document.getElementById('fileInput').addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const content = e.target.result;
-          const extension = file.name.split('.').pop().toLowerCase();
-          if (extension === "ptn") {
-            currentMode = "ptn";
-            document.getElementById('editor').value = content;
-            updateEditorHeaders();
-            updateConvertButton();
-            convertCode();
-          } else if (extension === "py") {
-            currentMode = "py";
-            document.getElementById('editor').value = content;
-            updateEditorHeaders();
-            updateConvertButton();
-            convertCode();
-          } else {
-            alert("Archivo no soportado. Solo se permiten .ptn y .py");
-          }
-          updateLineNumbers();
-        };
-        reader.readAsText(file);
-      }
-    });
-
-    document.getElementById('editor').addEventListener('input', updateLineNumbers);
-    updateLineNumbers();
-    updateEditorHeaders();
-    updateConvertButton();
-  </script>
+  <script src="convertidor_python.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
