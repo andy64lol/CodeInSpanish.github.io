@@ -97,7 +97,6 @@ function convertirPitonAPython(customCode) {
         'pop': 'pop',
         'limpiar': 'clear',
         'indice': 'index',
-        'contar': 'count',
         'ordenar': 'sort',
         'reversa': 'reverse',
         'copiar': 'copy',
@@ -205,54 +204,18 @@ function convertirPitonAPython(customCode) {
         'textwrap': 'textwrap',
         'difflib': 'difflib',
         're': 're',
-        'struct': 'struct',
         'binascii': 'binascii',
         'array': 'array',
         'queue': 'queue',
         'heapq': 'heapq',
         'bisect': 'bisect',
-        'weakref': 'weakref',
-        'copy': 'copy',
         'pprint': 'pprint',
         'reprlib': 'reprlib',
-        'enum': 'enum',
         'types': 'types',
-        'inspect': 'inspect',
-        'ast': 'ast',
-        'dis': 'dis',
-        'gc': 'gc',
-        'atexit': 'atexit',
-        'signal': 'signal',
-        'select': 'select',
-        'ssl': 'ssl',
-        'uuid': 'uuid',
-        'ipaddress': 'ipaddress',
-        'html': 'html',
-        'xml': 'xml',
-        'email': 'email',
-        'configparser': 'configparser',
-        'argparse': 'argparse',
-        'getpass': 'getpass',
-        'readline': 'readline',
-        'rlcompleter': 'rlcompleter',
-        'cmd': 'cmd',
-        'shlex': 'shlex',
-        'glob': 'glob',
-        'fnmatch': 'fnmatch',
-        'linecache': 'linecache',
-        'tempfile': 'tempfile',
-        'mmap': 'mmap',
-        'codecs': 'codecs',
-        'unicodedata': 'unicodedata',
-        'string': 'string',
-        'textwrap': 'textwrap',
-        'difflib': 'difflib',
-        're': 're',
-        'struct': 'struct',
     };
 
     let pythonCode = customCode;
-    
+
     // Reemplazar palabras clave
     Object.entries(replacements).forEach(([pit, pyt]) => {
         const regex = new RegExp(`\\b${pit}\\b`, 'g');
@@ -269,5 +232,3 @@ function convertirPitonAPython(customCode) {
 
     return pythonCode;
 }
-
-window.convertirPitonAPython = convertirPitonAPython;
