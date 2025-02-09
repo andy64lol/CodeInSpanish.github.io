@@ -149,138 +149,144 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
   <input type="file" id="fileInput" style="display:none" />
   <script>
     function convertirPitonAPython(codigo) {
-  let pythonCode = codigo.replace(/\r\n/g, '\n').trim();
+      let pythonCode = codigo.replace(/\r\n/g, '\n').trim();
 
-  pythonCode = pythonCode.replace(/(\n|^)\s*funcion\s+(\w+)\s*\(([^)]*)\)\s*:/g, (match, p1, p2, p3) => {
-    return `${p1}def ${p2}(${p3}):`;
-  });
+      // Convertir definición de función
+      pythonCode = pythonCode.replace(/(^|\n)\s*funcion\s+(\w+)\s*\(([^)]*)\)\s*:/g, (match, p1, p2, p3) => {
+        return `${p1}def ${p2}(${p3}):`;
+      });
 
-  pythonCode = pythonCode.replace(/si\s+(.*?)\s+entonces:/g, 'if $1:');
-  pythonCode = pythonCode.replace(/sino\s+si\s+(.*?)\s+entonces:/g, 'elif $1:');
-  pythonCode = pythonCode.replace(/sino:/g, 'else:');
+      // Convertir estructuras condicionales y bucles
+      pythonCode = pythonCode.replace(/si\s+(.*?)\s+entonces:/g, 'if $1:');
+      pythonCode = pythonCode.replace(/sino\s+si\s+(.*?)\s+entonces:/g, 'elif $1:');
+      pythonCode = pythonCode.replace(/sino:/g, 'else:');
+      pythonCode = pythonCode.replace(/para\s+(.*?)\s+en\s+(.*?)\s+hacer:/g, 'for $1 in $2:');
+      pythonCode = pythonCode.replace(/mientras\s+(.*?)\s+hacer:/g, 'while $1:');
 
-  pythonCode = pythonCode.replace(/para\s+(.*?)\s+en\s+(.*?)\s+hacer:/g, 'for $1 in $2:');
-  pythonCode = pythonCode.replace(/mientras\s+(.*?)\s+hacer:/g, 'while $1:');
+      // Convertir impresión y retorno
+      pythonCode = pythonCode.replace(/imprimir\((.*)\)/g, 'print($1)');
+      pythonCode = pythonCode.replace(/retornar/g, 'return');
 
-  pythonCode = pythonCode.replace(/imprimir\((.*)\)/g, 'print($1)');
+      // Otras conversiones puntuales
+      pythonCode = pythonCode.replace(/sea\s+(\w+)\s*=\s*(.*)/g, '$1 = $2');
 
-  pythonCode = pythonCode.replace(/retornar/g, 'return');
-  pythonCode = pythonCode.replace(/sea\s+(\w+)\s*=\s*(.*)/g, '$1 = $2');
+      // Reemplazos de palabras reservadas y funciones
+      const replacements = {
+        'no es': 'is not',
+        'es': 'is',
+        'verdadero': 'True',
+        'falso': 'False',
+        'nulo': 'None',
+        'y': 'and',
+        'o': 'or',
+        'no': 'not',
+        'lista': 'list',
+        'tupla': 'tuple',
+        'conjunto': 'set',
+        'diccionario': 'dict',
+        'longitud': 'len',
+        'rango': 'range',
+        'iterar': 'iter',
+        'siguiente': 'next',
+        'romper': 'break',
+        'continuar': 'continue',
+        'intentar': 'try',
+        'capturar': 'except',
+        'lanzar': 'raise',
+        'finalmente': 'finally',
+        'clase': 'class',
+        'importar': 'import',
+        'como': 'as',
+        'desde': 'from',
+        'definir': 'def',
+        'estructura': 'struct',
+        'devolver': 'yield',
+        'incluir': 'include',
+        'constante': 'const',
+        'estatico': 'static',
+        'publico': 'public',
+        'privado': 'private',
+        'protegido': 'protected',
+        'asincrono': 'async',
+        'esperar': 'await',
+        'con': 'with',
+        'pasar': 'pass',
+        'lambda': 'lambda',
+        'global': 'global',
+        'no local': 'nonlocal',
+        'super': 'super',
+        'del': 'del',
+        'hacer': 'do',
+        'caso': 'case',
+        'predeterminado': 'default',
+        'en': 'in',
+        'entero': 'int',
+        'flotante': 'float',
+        'cadena': 'str',
+        'booleano': 'bool',
+        'afirmar': 'assert',
+        'propiedad': 'property',
+        'absoluto': 'abs',
+        'todos': 'all',
+        'cualquiera': 'any',
+        'binario': 'bin',
+        'hexadecimal': 'hex',
+        'octal': 'oct',
+        'caracter': 'chr',
+        'ordinal': 'ord',
+        'enumerar': 'enumerate',
+        'evaluar': 'eval',
+        'filtrar': 'filter',
+        'formatear': 'format',
+        'entrada': 'input',
+        'maximo': 'max',
+        'minimo': 'min',
+        'abrir': 'open',
+        'redondear': 'round',
+        'sumar': 'sum',
+        'tipo': 'type',
+        'es_instancia': 'isinstance',
+        'es_subclase': 'issubclass',
+        'contiene': 'in',  // Para "if contiene"
+        'vacío': 'None',
+        'vacio': 'None',
+        'decimal': 'float',
+        'complejo': 'complex',
+        'bytes': 'bytes',
+        'arreglo': 'list',
+        'metodo': 'def',
+        'constructor': '__init__',
+        'documentacion': '"""',
+        'inicio': '__name__ == "__main__"',
+        'ejecutar': 'if __name__ == "__main__":',
+        'azar': 'random',
+        'aleatorio': 'random',
+        'math': 'math',
+        'fecha': 'datetime',
+        'error': 'Exception'
+      };
 
-  const replacements = {
-    'no es': 'is not',
-    'es': 'is',
-    'verdadero': 'True',
-    'falso': 'False',
-    'nulo': 'None',
-    'y': 'and',
-    'o': 'or',
-    'no': 'not',
-    'lista': 'list',
-    'tupla': 'tuple',
-    'conjunto': 'set',
-    'diccionario': 'dict',
-    'longitud': 'len',
-    'rango': 'range',
-    'iterar': 'iter',
-    'siguiente': 'next',
-    'romper': 'break',
-    'continuar': 'continue',
-    'intentar': 'try',
-    'capturar': 'except',
-    'lanzar': 'raise',
-    'finalmente': 'finally',
-    'clase': 'class',
-    'importar': 'import',
-    'como': 'as',
-    'desde': 'from',
-    'definir': 'def',
-    'estructura': 'struct',
-    'devolver': 'yield',
-    'incluir': 'include',
-    'constante': 'const',
-    'estatico': 'static',
-    'publico': 'public',
-    'privado': 'private',
-    'protegido': 'protected',
-    'asincrono': 'async',
-    'esperar': 'await',
-    'con': 'with',
-    'pasar': 'pass',
-    'lambda': 'lambda',
-    'global': 'global',
-    'no local': 'nonlocal',
-    'super': 'super',
-    'del': 'del',
-    'hacer': 'do',
-    'caso': 'case',
-    'predeterminado': 'default'
-    'en': 'in',
-    'entero': 'int',
-    'flotante': 'float',
-    'cadena': 'str',
-    'booleano': 'bool',
-    'afirmar': 'assert',
-  'propiedad': 'property',
-  'absoluto': 'abs',
-  'todos': 'all',
-  'cualquiera': 'any',
-  'binario': 'bin',
-  'hexadecimal': 'hex',
-  'octal': 'oct',
-  'caracter': 'chr',
-  'ordinal': 'ord',
-  'enumerar': 'enumerate',
-  'evaluar': 'eval',
-  'filtrar': 'filter',
-  'formatear': 'format',
-  'entrada': 'input',
-  'maximo': 'max',
-  'minimo': 'min',
-  'abrir': 'open',
-  'redondear': 'round',
-  'sumar': 'sum',
-  'tipo': 'type',
-  'es_instancia': 'isinstance',
-  'es_subclase': 'issubclass',
-  'contiene': 'in',  // For "if contiene"
-  'vacío': 'None',
-  'vacio': 'None',
-  'decimal': 'float',
-  'complejo': 'complex',
-  'bytes': 'bytes',
-  'arreglo': 'list',
-  'metodo': 'def',
-  'constructor': '__init__',
-  'documentacion': '"""',
-  'inicio': '__name__ == "__main__"',
-  'ejecutar': 'if __name__ == "__main__":',
-  'azar': 'random',
-  'aleatorio': 'random',
-  'math': 'math',
-  'fecha': 'datetime',
-  'error': 'Exception'
-  };
+      // Para asegurar que \b se interprete correctamente, escapamos la barra invertida.
+      Object.keys(replacements).forEach(key => {
+        const regex = new RegExp(`\\b${key}\\b`, 'g');
+        pythonCode = pythonCode.replace(regex, replacements[key]);
+      });
 
-  const orderedKeys = Object.keys(replacements);
+      // Eliminar las líneas de cierre (fin funcion, fin si, etc.)
+      pythonCode = pythonCode.replace(/(^|\n)\s*fin(\s+\w+)?/g, '');
 
-  orderedKeys.forEach(key => {
-    const regex = new RegExp(`\b${key}\b`, 'g');
-    pythonCode = pythonCode.replace(regex, replacements[key]);
-  });
+      // Ajustar indentación: se asume que la indentación original es de 2 espacios
+      pythonCode = pythonCode.replace(/(\n)(\s*)/g, (match, p1, p2) => {
+        const indentLevel = Math.floor(p2.length / 2);
+        return `${p1}${'  '.repeat(indentLevel)}`;
+      });
 
-  pythonCode = pythonCode.replace(/(\n|^)\s*fin(\s+\w+)?/g, '');
+      // Limpiar espacios antes de dos puntos y saltos de línea extra
+      pythonCode = pythonCode.replace(/\s+:/g, ':');
+      pythonCode = pythonCode.replace(/(\n){3,}/g, '\n\n');
 
-  pythonCode = pythonCode.replace(/(\n)(\s*)/g, (match, p1, p2) => {
-    const indentLevel = p2.length / 2;
-    return `${p1}${'  '.repeat(indentLevel)}`;
-  });
-
-  pythonCode = pythonCode.replace(/\s+:/g, ':');
-  pythonCode = pythonCode.replace(/(\n){3,}/g, '\n\n');
-
-  return pythonCode.trim();
-}
+      return pythonCode.trim();
+    }
 
     const editor = document.getElementById('editor');
     const preview = document.getElementById('preview');
@@ -303,7 +309,7 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
     function convertCode() {
       preview.textContent = currentMode === "ptn" 
         ? convertirPitonAPython(editor.value)
-        : ''; // Handle conversion back if needed
+        : ''; // Si se requiere la conversión inversa, se implementaría aquí
     }
 
     function saveFile(extension) {
