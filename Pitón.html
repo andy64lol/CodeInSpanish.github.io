@@ -149,71 +149,138 @@ imprimir("Factorial de 5:", factorial(5))</textarea>
   <input type="file" id="fileInput" style="display:none" />
   <script>
     function convertirPitonAPython(codigo) {
-      // Normalize line endings and trim the code
-      let pythonCode = codigo.replace(/\r\n/g, '\n').trim();
+  let pythonCode = codigo.replace(/\r\n/g, '\n').trim();
 
-      // Handle function definitions
-      pythonCode = pythonCode.replace(/(\n|^)\s*funcion\s+(\w+)\s*\(([^)]*)\)\s*:/g, (match, p1, p2, p3) => {
-        return `${p1}def ${p2}(${p3}):`;
-      });
+  pythonCode = pythonCode.replace(/(\n|^)\s*funcion\s+(\w+)\s*\(([^)]*)\)\s*:/g, (match, p1, p2, p3) => {
+    return `${p1}def ${p2}(${p3}):`;
+  });
 
-      // Handle if, elif, and else statements
-      pythonCode = pythonCode.replace(/si\s+(.*?)\s+entonces:/g, 'if $1:');
-      pythonCode = pythonCode.replace(/sino\s+si\s+(.*?)\s+entonces:/g, 'elif $1:');
-      pythonCode = pythonCode.replace(/sino:/g, 'else:');
+  pythonCode = pythonCode.replace(/si\s+(.*?)\s+entonces:/g, 'if $1:');
+  pythonCode = pythonCode.replace(/sino\s+si\s+(.*?)\s+entonces:/g, 'elif $1:');
+  pythonCode = pythonCode.replace(/sino:/g, 'else:');
 
-      // Handle loops
-      pythonCode = pythonCode.replace(/para\s+(.*?)\s+en\s+(.*?)\s+hacer:/g, 'for $1 in $2:');
-      pythonCode = pythonCode.replace(/mientras\s+(.*?)\s+hacer:/g, 'while $1:');
+  pythonCode = pythonCode.replace(/para\s+(.*?)\s+en\s+(.*?)\s+hacer:/g, 'for $1 in $2:');
+  pythonCode = pythonCode.replace(/mientras\s+(.*?)\s+hacer:/g, 'while $1:');
 
-      // Handle print statements
-      pythonCode = pythonCode.replace(/imprimir\((.*)\)/g, 'print($1)');
+  pythonCode = pythonCode.replace(/imprimir\((.*)\)/g, 'print($1)');
 
-      // Handle return statements
-      pythonCode = pythonCode.replace(/retornar/g, 'return');
+  pythonCode = pythonCode.replace(/retornar/g, 'return');
+  pythonCode = pythonCode.replace(/sea\s+(\w+)\s*=\s*(.*)/g, '$1 = $2');
 
-      // Handle logical operators and keywords
-      const replacements = {
-        'no es': 'is not',
-        'es': 'is',
-        'verdadero': 'True',
-        'falso': 'False',
-        'nulo': 'None',
-        'y': 'and',
-        'o': 'or',
-        'no': 'not',
-        'lista': 'list',
-        'tupla': 'tuple',
-        'conjunto': 'set',
-        'diccionario': 'dict',
-        'longitud': 'len',
-        'rango': 'range',
-        'iterar': 'iter',
-        'siguiente': 'next'
-      };
+  const replacements = {
+    'no es': 'is not',
+    'es': 'is',
+    'verdadero': 'True',
+    'falso': 'False',
+    'nulo': 'None',
+    'y': 'and',
+    'o': 'or',
+    'no': 'not',
+    'lista': 'list',
+    'tupla': 'tuple',
+    'conjunto': 'set',
+    'diccionario': 'dict',
+    'longitud': 'len',
+    'rango': 'range',
+    'iterar': 'iter',
+    'siguiente': 'next',
+    'romper': 'break',
+    'continuar': 'continue',
+    'intentar': 'try',
+    'capturar': 'except',
+    'lanzar': 'raise',
+    'finalmente': 'finally',
+    'clase': 'class',
+    'importar': 'import',
+    'como': 'as',
+    'desde': 'from',
+    'definir': 'def',
+    'estructura': 'struct',
+    'devolver': 'yield',
+    'incluir': 'include',
+    'constante': 'const',
+    'estatico': 'static',
+    'publico': 'public',
+    'privado': 'private',
+    'protegido': 'protected',
+    'asincrono': 'async',
+    'esperar': 'await',
+    'con': 'with',
+    'pasar': 'pass',
+    'lambda': 'lambda',
+    'global': 'global',
+    'no local': 'nonlocal',
+    'super': 'super',
+    'del': 'del',
+    'hacer': 'do',
+    'caso': 'case',
+    'predeterminado': 'default'
+    'en': 'in',
+    'entero': 'int',
+    'flotante': 'float',
+    'cadena': 'str',
+    'booleano': 'bool',
+    'afirmar': 'assert',
+  'propiedad': 'property',
+  'absoluto': 'abs',
+  'todos': 'all',
+  'cualquiera': 'any',
+  'binario': 'bin',
+  'hexadecimal': 'hex',
+  'octal': 'oct',
+  'caracter': 'chr',
+  'ordinal': 'ord',
+  'enumerar': 'enumerate',
+  'evaluar': 'eval',
+  'filtrar': 'filter',
+  'formatear': 'format',
+  'entrada': 'input',
+  'maximo': 'max',
+  'minimo': 'min',
+  'abrir': 'open',
+  'redondear': 'round',
+  'sumar': 'sum',
+  'tipo': 'type',
+  'es_instancia': 'isinstance',
+  'es_subclase': 'issubclass',
+  'contiene': 'in',  // For "if contiene"
+  'vacío': 'None',
+  'vacio': 'None',
+  'decimal': 'float',
+  'complejo': 'complex',
+  'bytes': 'bytes',
+  'arreglo': 'list',
+  'metodo': 'def',
+  'constructor': '__init__',
+  'documentacion': '"""',
+  'inicio': '__name__ == "__main__"',
+  'ejecutar': 'if __name__ == "__main__":',
+  'azar': 'random',
+  'aleatorio': 'random',
+  'math': 'math',
+  'fecha': 'datetime',
+  'error': 'Exception'
+  };
 
-      const orderedKeys = [
-        'no es', 'es', 'verdadero', 'falso', 'nulo', 'y', 'o', 'no',
-        'lista', 'tupla', 'conjunto', 'diccionario', 'longitud', 'rango', 'iterar', 'siguiente'
-      ];
+  const orderedKeys = Object.keys(replacements);
 
-      orderedKeys.forEach(key => {
-        const regex = new RegExp(`\\b${key}\\b`, 'g');
-        pythonCode = pythonCode.replace(regex, replacements[key]);
-      });
+  orderedKeys.forEach(key => {
+    const regex = new RegExp(`\b${key}\b`, 'g');
+    pythonCode = pythonCode.replace(regex, replacements[key]);
+  });
 
-      pythonCode = pythonCode.replace(/(\n|^)\s*fin(\s+\w+)?/g, '');
+  pythonCode = pythonCode.replace(/(\n|^)\s*fin(\s+\w+)?/g, '');
 
-      pythonCode = pythonCode.replace(/(\n)(\s*)/g, (match, p1, p2) => {
-        const indentLevel = p2.length / 2;
-        return `${p1}${'  '.repeat(indentLevel)}`;
-      });
+  pythonCode = pythonCode.replace(/(\n)(\s*)/g, (match, p1, p2) => {
+    const indentLevel = p2.length / 2;
+    return `${p1}${'  '.repeat(indentLevel)}`;
+  });
 
-      pythonCode = pythonCode.replace(/\s+:/g, ':');
-      pythonCode = pythonCode.replace(/(\n){3,}/g, '\n\n');
+  pythonCode = pythonCode.replace(/\s+:/g, ':');
+  pythonCode = pythonCode.replace(/(\n){3,}/g, '\n\n');
 
-      return pythonCode.trim();
-    }
+  return pythonCode.trim();
+}
 
     const editor = document.getElementById('editor');
     const preview = document.getElementById('preview');
