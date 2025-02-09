@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IDE CeMásMás</title>
+  <style>
+     * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .editor-pane, .preview-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #252526;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .editor-header, .preview-header {
+      background: #2d2d2d;
+      padding: 12px 15px;
+      border-bottom: 1px solid #333;
+    }
+
+    .editor-content {
+      flex: 1;
+      position: relative;
+    }
+
+    .line-numbers {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 100%;
+      background: #1e1e1e;
+      color: #858585;
+      text-align: right;
+      padding: 10px;
+      font-family: 'Consolas', monospace;
+      user-select: none;
+    }
+
+    #editor {
+      width: 100%;
+      height: 100%;
+      padding: 10px 10px 10px 50px;
+      background: #1e1e1e;
+      border: none;
+      color: #d4d4d4;
+      font-family: 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      tab-size: 4;
+      white-space: pre;
+    }
+
+    #preview {
+      flex: 1;
+      background: #1e1e1e;
+      padding: 20px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+    }
+
+    .buttons {
+      padding: 15px 20px;
+      background: #252526;
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid #333;
+    }
+
+    button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0062a3;
+    }
+
+    .error {
+      color: #ff5555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="editor-pane">
+      <div class="editor-header">
+        <span id="editorHeader">main.cmm</span>
+      </div>
+      <div class="editor-content">
+        <div class="line-numbers" id="lineNumbers"></div>
+        <textarea id="editor" spellcheck="false">incluir <iostream>
+usar espacioDeNombre std;
+
+entero principal() {
+    entero numero = 5;
+    entero resultado = factorial(numero);
+    
+    cout << "Factorial de " << numero << " es: " << resultado << endl;
+    retornar 0;
+}
+
+entero factorial(entero n) {
+    si (n == 0) {
+        retornar 1;
+    } sino {
+        retornar n * factorial(n - 1);
+    }
+}</textarea>
+      </div>
+    </div>
+    <div class="preview-pane">
+      <div class="preview-header">
+        <span id="previewHeader">Código C++</span>
+      </div>
+      <pre id="preview"></pre>
+    </div>
+  </div>
+  <div class="buttons">
+    <button id="convertButton">Convertir a C++</button>
+    <button id="saveNativeButton">Guardar .cmm</button>
+    <button id="saveConvertedButton">Guardar .cpp</button>
+    <a href="index.html"><button>Volver</button></a>
+    <button id="loadButton">Cargar</button>
+  </div>
+  <input type="file" id="fileInput" style="display:none" />
+  <script>
+    function convertirCeMasMasACPP(codigo) {
+  let cppCode = codigo.replace(/\r\n/g, '\n').trim();
+
+  // Reemplazar includes y namespaces
+  cppCode = cppCode.replace(/incluir\s+<([\w.]+)>/g, '#include <$1>');
+  cppCode = cppCode.replace(/usar espacioDeNombre (\w+);/g, 'using namespace $1;');
+
+  // Funciones principales
+  cppCode = cppCode.replace(/(\n|^)\s*(\w+)\s+(\w+)\s*\(([^)]*)\)\s*{/g, (match, p1, retType, name, params) => {
+    params = params.replace(/entero/g, 'int')
+                  .replace(/flotante/g, 'float')
+                  .replace(/doble/g, 'double')
+                  .replace(/cadena/g, 'string')
+                  .replace(/booleano/g, 'bool');
+    return `${p1}${retType} ${name}(${params}) {`;
+  });
+
+  // Tipos de datos
+  const tipos = {
+    'entero': 'int',
+    'flotante': 'float',
+    'doble': 'double',
+    'cadena': 'string',
+    'booleano': 'bool',
+    'caracter': 'char',
+    'vacio': 'void',
+    'largo': 'long',
+    'corto': 'short'
+  };
+
+  Object.entries(tipos).forEach(([key, value]) => {
+    cppCode = cppCode.replace(new RegExp(`\\b${key}\\b`, 'g'), value);
+  });
+
+  // Estructuras de control
+  cppCode = cppCode.replace(/si\s*\((.*)\)\s*{/g, 'if ($1) {');
+  cppCode = cppCode.replace(/sino si\s*\((.*)\)\s*{/g, 'else if ($1) {');
+  cppCode = cppCode.replace(/sino\s*{/g, 'else {');
+  cppCode = cppCode.replace(/para\s*\((.*);(.*);(.*)\)\s*{/g, 'for ($1; $2; $3) {');
+  cppCode = cppCode.replace(/mientras\s*\((.*)\)\s*{/g, 'while ($1) {');
+  
+  // Entrada/Salida
+  cppCode = cppCode.replace(/cout\s*<<(.*)<<\s*endl;/g, 'cout << $1 << endl;');
+  cppCode = cppCode.replace(/cin\s*>>\s*(\w+);/g, 'cin >> $1;');
+  
+  // Palabras reservadas
+  const reservadas = {
+    'retornar': 'return',
+    'clase': 'class',
+    'publico': 'public',
+    'privado': 'private',
+    'protegido': 'protected',
+    'estructura': 'struct',
+    'incluir': '#include',
+    'definir': '#define',
+    'si': 'if',
+    'sino': 'else',
+    'principal': 'main',
+    'constante': 'const',
+    'estatico': 'static',
+    'nuevo': 'new',
+    'eliminar': 'delete',
+    'romper': 'break',
+    'continuar': 'continue'
+  };
+
+  Object.entries(reservadas).forEach(([key, value]) => {
+    const regex = new RegExp(`\\b${key}\\b`, 'g');
+    cppCode = cppCode.replace(regex, value);
+  });
+
+  // Puntos y comas finales
+  cppCode = cppCode.replace(/(\w)\s*\n/g, '$1;\n');
+  cppCode = cppCode.replace(/}\s*(?!(\s*else|\s*while))/g, '};\n');
+
+  return cppCode.trim();
+}
+
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const convertButton = document.getElementById('convertButton');
+    const saveNativeButton = document.getElementById('saveNativeButton');
+    const saveConvertedButton = document.getElementById('saveConvertedButton');
+    const loadButton = document.getElementById('loadButton');
+    const fileInput = document.getElementById('fileInput');
+
+    let currentMode = "cmm";
+
+    function updateLineNumbers() {
+      const lines = editor.value.split('\n').length;
+      document.getElementById('lineNumbers').innerHTML = Array(lines)
+        .fill()
+        .map((_, i) => i + 1)
+        .join('<br>');
+    }
+
+    function convertCode() {
+      preview.textContent = currentMode === "cmm" 
+        ? convertirCeMasMasACPP(editor.value)
+        : ''; // Conversión inversa si es necesario
+    }
+
+    function saveFile(extension) {
+      const content = extension === (currentMode === "cmm" ? "cmm" : "cpp")
+        ? editor.value
+        : preview.textContent;
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `main.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function updateUI() {
+      document.getElementById('editorHeader').textContent = 
+        `main.${currentMode === "cmm" ? "cmm" : "cpp"}`;
+
+      document.getElementById('previewHeader').textContent = 
+        `${currentMode === "cmm" ? "C++" : "CeMásMás"} Code`;
+
+      convertButton.textContent = 
+        `Convertir a ${currentMode === "cmm" ? "C++" : "CeMásMás"}`;
+
+      saveNativeButton.textContent = 
+        `Guardar .${currentMode === "cmm" ? "cmm" : "cpp"}`;
+
+      saveConvertedButton.textContent = 
+        `Guardar .${currentMode === "cmm" ? "cpp" : "cmm"}`;
+    }
+
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        editor.value = e.target.result;
+        currentMode = file.name.endsWith('.cmm') ? 'cmm' : 'cpp';
+        updateUI();
+        convertCode();
+        updateLineNumbers();
+      };
+      reader.readAsText(file);
+    }
+
+    editor.addEventListener('input', updateLineNumbers);
+    convertButton.addEventListener('click', convertCode);
+    saveNativeButton.addEventListener('click', () => saveFile(currentMode === "cmm" ? "cmm" : "cpp"));
+    saveConvertedButton.addEventListener('click', () => saveFile(currentMode === "cmm" ? "cpp" : "cmm"));
+    loadButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    });
+
+    updateUI();
+    updateLineNumbers();
+    convertCode();
+  </script>
+</body>
+</html>
