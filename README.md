@@ -24,7 +24,7 @@
 3. Open `index.html` in your browser to start coding in Spanish!
 
 ## 🛠 Usage
-Write code using Spanish keywords instead of English. Example:
+Write code using Spanish keywords instead of English. Example using Pitón:
 ```spanish
 si (x es mayor que 10) {
     mostrar("El número es grande");
@@ -72,7 +72,7 @@ Made with ❤️ for Spanish-speaking developers!
 3. Abre `index.html` en tu navegador para empezar a programar en español.
 
 ## 🛠 Uso
-Escribe código usando palabras clave en español en lugar de inglés. Ejemplo:
+Escribe código usando palabras clave en español en lugar de inglés. Ejemplo usando Pitón:
 ```spanish
 si (x es mayor que 10) {
     mostrar("El número es grande");
@@ -97,7 +97,7 @@ Hecho con ❤️ para los desarrolladores hispanohablantes.
 
 # Versión en español latinoamericano
 
-**CodeInSpanish** es un proyecto que te permite programar en español, como si estuvieras chateando, sin necesidad de usar sintaxis en inglés. Su meta es hacer que la programación sea más accesible para quienes hablan español, eliminando las barreras del idioma.
+**CodeInSpanish** es un proyecto que te permite programar en español, como si estuvieras chateando, sin necesidad de usar sintaxis en el idioma gringo. Su meta es hacer que la programación sea más accesible para quienes hablan español, eliminando las barreras del idioma.
 
 ## 🚀 Características
 - Escribe código en español sin preocuparte por palabras clave en inglés.
@@ -121,7 +121,7 @@ Hecho con ❤️ para los desarrolladores hispanohablantes.
 3. Abre `index.html` en tu navegador para comenzar a programar en español.
 
 ## 🛠 Uso
-Escribe código con palabras clave en español en vez de inglés. Ejemplo:
+Escribe código con palabras clave en español en vez de inglés. Ejemplo con Pitón:
 ```spanish
 si (x es mayor que 10) {
     mostrar("El número es grande");
